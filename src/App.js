@@ -16,6 +16,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
+          Learn Tomfoolery.
           Learn Updated
         </a>
       </header>
