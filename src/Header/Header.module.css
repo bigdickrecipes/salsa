@@ -1,0 +1,15 @@
+.Recipe {
+  background-color: blue;
+}
+
+.Nothing {
+  background-color: green;
+}
+
+.Header {
+  border: 2px solid black;
+}
+
+.HeaderLink {
+  margin: 0 4px;
+}

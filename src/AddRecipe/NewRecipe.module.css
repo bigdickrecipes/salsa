@@ -1,0 +1,44 @@
+.formsWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.formsWrapper form {
+    flex: 0 0 340px;
+    margin: 2em 1em;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,.1), 0 4px 16px 0 rgba(0,0,0,.15);
+    padding: 1em;
+    background:#FFF;
+}
+
+.formsWrapper form label {
+    display: block;
+    font-size: 0.75em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.createRecipeFormSection {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.formsWrapper form input[type=text],
+.formsWrapper form input[type=number],
+.formsWrapper form input[type=textarea],
+.formsWrapper form textarea,
+.formsWrapper form select {
+    display: block;
+    width: 100%;
+}
