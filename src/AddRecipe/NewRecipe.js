@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import gql from 'graphql-tag';
 import axios from 'axios';
+import { Query } from 'react-apollo';
 import styles from './NewRecipe.module.css';
 import Categories from './Categories.js';
 import Tags from './Tags.js';
@@ -10,6 +12,23 @@ import AddIngredient from './AddIngredient.js';
 import AddInstruction from './AddInstruction.js';
 import AddRecipeImage from './AddRecipeImage.js';
 import AddIngredientsText from './AddIngredientsText.js'
+
+const populateNewRecipePage = gql`
+{
+  tags {
+    id
+    tag
+  }
+  ingredients {
+    id
+    ingredient
+  }
+  categories {
+    id
+    category
+  }
+}
+`;
 
 class NewRecipe extends Component {
   constructor(props) {
@@ -33,9 +52,6 @@ class NewRecipe extends Component {
       html: '',
     }
     this.titleChange = this.titleChange.bind(this);
-    this.refreshTags = this.refreshTags.bind(this);
-    this.refreshCategories = this.refreshCategories.bind(this);
-    this.refreshIngredients = this.refreshIngredients.bind(this);
     this.tagLineChange = this.tagLineChange.bind(this);
     this.categoryChange = this.categoryChange.bind(this);
     this.heatChange = this.heatChange.bind(this);
@@ -51,45 +67,9 @@ class NewRecipe extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() {
-    //server request to populate available categories and available tags.
-    this.refreshTags();
-    this.refreshCategories();
-    this.refreshIngredients();
-  }
-
-  refreshTags() {
-    axios.get('/salsa/handleTags')
-      .then((res) => {
-        this.setState({availableTags: res.data.rows})
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
-
-  refreshCategories() {
-    axios.get('/salsa/handleCategories')
-      .then((res) => {
-        let arr = [{category: 'Select Category'}]
-        let newArr = arr.concat(res.data.rows)
-        this.setState({availableCategories: newArr})
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
-
-  refreshIngredients() {
-    axios.get('/salsa/handleIngredients')
-      .then((res) => {
-        let arr = res.data.rows;
-        this.setState({availableIngredients: arr})
-      })
-      .catch((err) => {
-        console.log(err)
-      });
-  }
+  // componentDidMount() {
+  //   server request to populate available categories and available tags.
+  // }
   
   titleChange(e) {
     this.setState({recipeName: e.target.value});
@@ -236,6 +216,10 @@ class NewRecipe extends Component {
 
   render() {
     return (
+      <Query query={populateNewRecipePage}>
+      {({ data }) => {
+        console.log('this bitch is data: ',data)
+        return(
       <div className={styles.formsWrapper}>
         <form className={styles.createRecipeForm} onSubmit={this.handleSubmit}>
           <h2>Add a New Recipe</h2>
@@ -250,13 +234,13 @@ class NewRecipe extends Component {
             <label>Recipe Tagline:</label>
             <input type="text" value={this.state.tagLine} onChange={this.tagLineChange} />
           </div>
-          <Ingredients availableIngredients = {this.state.availableIngredients} selectIngredient = {this.selectIngredient}/>
+          <Ingredients availableIngredients = {data.ingredients} selectIngredient = {this.selectIngredient}/>
           <label>Ingredients Text:</label>
           {this.state.ingredientsText.map((ingredient, i) => {
             return <div className = {styles.createRecipeFormSection} key = {i}>{i + 1}: {ingredient}</div>
           })}
-          <Categories categories = {this.state.availableCategories} category = {this.state.category} categoryChange = {this.categoryChange}/>
-          <Tags availableTags = {this.state.availableTags} selectTag = {this.selectTag}/>
+          <Categories categories = {data.categories} category = {this.state.category} categoryChange = {this.categoryChange}/>
+          <Tags availableTags = {data.tags} selectTag = {this.selectTag}/>
           <label>Instructions:</label>
           {this.state.instructions.map((instruction, i) => {
             return <div className = {styles.createRecipeFormSection} key = {i}>Step {i + 1}: {instruction}</div>
@@ -312,6 +296,8 @@ class NewRecipe extends Component {
         <AddCategory refreshCategories = {this.refreshCategories}/>
         <AddTag refreshTags = {this.refreshTags}/>
       </div>
+        )}}
+  </Query>
       
     );
   }
